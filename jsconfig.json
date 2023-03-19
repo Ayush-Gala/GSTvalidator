@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["./src/*"],
+      "@api/*": ["./src/api/*"]
+    },
+    "module":"esnext",
+    "moduleResolution":"node"
+  }
+}
