@@ -5,20 +5,24 @@ export default async function handler(req, res){
     const gst_secret = process.env.GST_AUTHORIZATION_TOKEN;
 
     //getting the gst number from the request from frontend
-    const gstnum = req.query.gstin;
-    console.log(typeof req.query);
-
+    const num = req.query.number;
+    let url = null;
     //setting the options for the fetch request
     const options = {
         method : 'GET',
         headers: {
-            'Authorization': 'Bearer 0ab31ef7392227173c6e8d34195e86d5eb0da1e9',
-            'client_id': 'JarZChUcsytSBbnkpt',  
+            'Authorization': gst_secret,
+            'client_id': gst_client  
         }
     }
 
-    //fetch route
-    const url = `https://commonapi.mastersindia.co/commonapis/searchgstin?gstin=${gstnum}`;
+    if(num.length > 10)
+    {
+        url = `https://commonapi.mastersindia.co/commonapis/searchgstin?gstin=${num}`;
+    } 
+    else{
+        url = `https://commonapi.mastersindia.co/commonapis/searchpan?pan=${num}`;
+    }
     
     try{
         //fetch request

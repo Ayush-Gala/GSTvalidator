@@ -1,20 +1,32 @@
 import Head from 'next/head'
 import { Inter } from 'next/font/google'
 import styles from '@/styles/Home.module.css'
-import Link from 'next/link'
-import { useState } from 'react'
+import { useState ,useEffect} from 'react'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
-  const [gstnum, setGstnum] = useState('')
-  const [pannum, setPannum] = useState('')
+  const [response, setResponse] = useState(null)
+  const [gstnum, setGstnum] = useState([])
+  const [details, setDetails] = useState([])
 
-  //write the logic for checking the number
+  //write the logic for checking GSTIN
     const checkGST = async gstnum => {
+    setResponse(false);
     const res = await fetch(`/api/handler/${gstnum}`)
     const data = await res.json();
-    console.log(data);
+    if(data.error){
+      setResponse(false);
+      alert('Error: ' + data.message);
+    }
+    else{
+      setDetails(data.data);
+      setResponse(true);
+    }
+  }
+
+  function display(data){
+    
   }
 
   return (
@@ -31,16 +43,34 @@ export default function Home() {
           JUST ENTER THE GST OR PAN NUMBER ON YOUR BILLS AND VALIDATE IF THE ORGANIZATION IS LEGITIMATE!
         </p>
         <div className='GSTinput'>
-          <label htmlFor='GST'>GST Number: </label>
-          <input type='text' placeholder='Enter the 15 digit GST number here' value={gstnum} onChange={(e) => setGstnum(e.target.value)}></input>
+          <label htmlFor='GST'>GST/PAN Number: </label>
+          <input type='text' placeholder='ex: 27CBKPA9141P1ZC' value={gstnum} onChange={(e) => setGstnum(e.target.value)}></input>
           <button onClick={() => checkGST(gstnum)}>Check Validity</button>
         </div>
-        <p>OR</p>
-        <div className='PANinput'>
-          <label htmlFor='PAN'>PAN Number: </label>
-          <input placeholder='Enter the PAN number here: '></input>
-          <button>Check Validity</button>
-        </div>
+        {
+        response ?
+        (
+          <div className='response'>
+            <p>Details found!</p>
+            <table>
+              <tbody>
+              {
+                display(details)
+              }
+            </tbody>
+            </table>
+          </div>
+        )
+        :
+        (
+          <div className='response'>
+            {/* <h3>Details not found!</h3>
+            <pre id="jsondata">
+              Please check the GST/PAN number and try again!
+            </pre> */}
+          </div>
+        )
+        }
       </main>
     </>
   )
